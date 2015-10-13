@@ -28,13 +28,31 @@
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
 <body>
+    <div class="banner"></div>
     <div class="container">
 
         <div class="row header">
-            <a href="/login">Log In</a>
+            <div class="six columns title">
+                <h1>A Catalog App</h1>
+            </div>
+            <div class="six columns login-link">
+                <a href="/login">Log In</a>
+            </div>
         </div>
 
-    {% block content %}{% endblock %}
+        <nav class="row categories">
+            <ul>
+                <li><a href="#"><i class="fa fa-automobile"></i></a></li>
+                <li><a href="#"><i class="fa fa-book"></i></a></li>
+                <li><a href="#"><i class="fa fa-camera"></i></a></li>
+                <li><a href="#"><i class="fa fa-fighter-jet"></i></a></li>
+                <li><a href="#"><i class="fa fa-film"></i></a></li>
+                <li><a href="#"><i class="fa fa-motorcycle"></i></a></li>
+            </ul>
+        </nav>
+
+        {% block content %}
+        {% endblock %}
 
     </div>
 </body>

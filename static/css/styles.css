@@ -1,43 +1,74 @@
 body {
-    background-image:url('../images/dinghy-at-bled-lake-slovenija-collection-1359564.jpg');
-    background-size:100%;
+    background:url('../images/sativa/sativa.png');
 }
-.header {
-    text-align:right;
-}
-.header a:link,
-.header a:active,
-.header a:visited {
-    text-decoration:none;
-    color:#666;
-}
-.splash {
-    margin-top:15%;
+.banner {
     color:white;
-    text-align:center;
-    padding:75px 50px;
-    border:1px solid white;
-    position:relative;
-    z-index:10;
+    background-image:url('../images/hCrSRTN.png');
+    background-repeat:repeat;
+    height:170px;
+    border-bottom:45px solid #333;
+}
+.container {
+    margin-top:-170px;
+}
+.title h1 {
+    color:white;
     font-family:'Lobster', cursive;
+    font-size:7rem;
+    text-shadow: 4px 3px #333;
 }
-.splash::before {
-    content:"";
-    display:block;
-    position:absolute;
-    z-index:-1;
-    top:4px;
-    left:4px;
-    right:4px;
-    bottom:4px;
-    border:1px solid white;
+.login-link {
+    text-align:right;
+    margin-top:-30px;
 }
-.splash h1 i {
-    font-size:0.7em;
-    margin-right:0.4em;
-    line-height:1em;
-    vertical-align:middle;
+.login-link a:link,
+.login-link a:active,
+.login-link a:visited {
+    text-decoration:none;
+    color:white;
+    padding: 1rem 5rem;
+    box-shadow: 3px 3px #333;
+    background: rgba(255,93,177,1);
+    background: -moz-linear-gradient(left, rgba(255,93,177,1) 0%, rgba(239,1,124,1) 100%);
+    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(255,93,177,1)), color-stop(100%, rgba(239,1,124,1)));
+    background: -webkit-linear-gradient(left, rgba(255,93,177,1) 0%, rgba(239,1,124,1) 100%);
+    background: -o-linear-gradient(left, rgba(255,93,177,1) 0%, rgba(239,1,124,1) 100%);
+    background: -ms-linear-gradient(left, rgba(255,93,177,1) 0%, rgba(239,1,124,1) 100%);
+    background: linear-gradient(to right, rgba(255,93,177,1) 0%, rgba(239,1,124,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff5db1', endColorstr='#ef017c', GradientType=1 );
+    transition:all 0.4s;
 }
-.splash h1 {
-    margin:0;
+.login-link a:hover {
+    background: rgba(255,56,159,1);
+    background: -moz-linear-gradient(left, rgba(255,56,159,1) 0%, rgba(213,1,111,1) 100%);
+    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(255,56,159,1)), color-stop(100%, rgba(213,1,111,1)));
+    background: -webkit-linear-gradient(left, rgba(255,56,159,1) 0%, rgba(213,1,111,1) 100%);
+    background: -o-linear-gradient(left, rgba(255,56,159,1) 0%, rgba(213,1,111,1) 100%);
+    background: -ms-linear-gradient(left, rgba(255,56,159,1) 0%, rgba(213,1,111,1) 100%);
+    background: linear-gradient(to right, rgba(255,56,159,1) 0%, rgba(213,1,111,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff389f', endColorstr='#d5016f', GradientType=1 );}
+.categories {
+    font-size: 3rem;
+    margin-top:20px;
+}
+.categories ul {
+    margin:0px;
+    padding:0px;
+    list-style:none;
+}
+.categories li {
+    float:left;
+    text-indent:0;
+}
+.categories li+li {
+    margin-left:50px;
+}
+.categories a:link,
+.categories a:active,
+.categories a:visited {
+    color:white;
+    transition:all 0.2s;
+}
+.categories a:hover {
+    color:rgb(239,1,124);
 }
