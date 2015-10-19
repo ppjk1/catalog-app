@@ -1,0 +1,11 @@
+{% extends "main.html" %}
+{% block content %}
+
+<p>Are you sure you want to delete {{ item.name }}?</p>
+
+<form action="#", method="post">
+    <button type="button" class="button-default" onclick="javascript:window.location='{{ url_for('showItem', c_permalink = category.permalink, i_permalink = item.permalink) }}'; return false;">Cancel</button>
+    <button type="submit">Delete</button>
+</form>
+
+{% endblock %}

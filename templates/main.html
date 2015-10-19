@@ -13,7 +13,7 @@
 
     <!-- FONT
     –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-    <link href='https://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
     <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 
@@ -28,32 +28,22 @@
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
 <body>
-    <div class="banner"></div>
-    <div class="container">
-
-        <div class="row header">
-            <div class="six columns title">
-                <h1>A Catalog App</h1>
-            </div>
-            <div class="six columns login-link">
-                <a href="/login">Log In</a>
-            </div>
+    <div class="banner">
+        <div class="login">
+            <a href="/login">Log In</a>
         </div>
-
-        <nav class="row categories">
-            <ul>
-                <li><a href="#"><i class="fa fa-automobile"></i></a></li>
-                <li><a href="#"><i class="fa fa-book"></i></a></li>
-                <li><a href="#"><i class="fa fa-camera"></i></a></li>
-                <li><a href="#"><i class="fa fa-fighter-jet"></i></a></li>
-                <li><a href="#"><i class="fa fa-film"></i></a></li>
-                <li><a href="#"><i class="fa fa-motorcycle"></i></a></li>
-            </ul>
-        </nav>
-
-        {% block content %}
-        {% endblock %}
-
+        <div class="title">
+            <h1>
+                <i class="fa fa-music" style="font-size:2rem; vertical-align:15px; letter-spacing:-15px;"></i>
+                <i class="fa fa-music" style="font-size:5rem; vertical-align:middle;"></i>
+                 Music for the Masses
+            </h1>
+        </div>
     </div>
+
+    {% block content %}{% endblock %}
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/menu.js') }}"></script>
 </body>
 </html>

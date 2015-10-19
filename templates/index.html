@@ -1,0 +1,13 @@
+{% extends "main.html" %}
+{% block content %}
+
+<div class="menu-trigger"><i class="fa fa-bars"></i> Menu</div>
+<nav id="menu">
+    <ul>
+    {% for c in categories %}
+        <li><a href="{{ url_for('showCategory', c_permalink = c.permalink) }}">{{ c.name }}</a></li>
+    {% endfor %}
+    </ul>
+</nav>
+
+{% endblock %}

@@ -1,32 +1,17 @@
-body {
-    background:url('../images/sativa/sativa.png');
-}
-.banner {
-    color:white;
-    background-image:url('../images/hCrSRTN.png');
-    background-repeat:repeat;
-    height:170px;
-    border-bottom:45px solid #333;
-}
+/*
+/   Skeleton style overrides
+*/
 .container {
-    margin-top:-170px;
+    width:100%;
 }
-.title h1 {
+.button,
+button,
+input[type="button"] {
     color:white;
-    font-family:'Lobster', cursive;
-    font-size:7rem;
-    text-shadow: 4px 3px #333;
-}
-.login-link {
-    text-align:right;
-    margin-top:-30px;
-}
-.login-link a:link,
-.login-link a:active,
-.login-link a:visited {
-    text-decoration:none;
-    color:white;
-    padding: 1rem 5rem;
+    border:none;
+    border-radius:0px;
+    height:35px;
+    margin-right:.3rem;
     box-shadow: 3px 3px #333;
     background: rgba(255,93,177,1);
     background: -moz-linear-gradient(left, rgba(255,93,177,1) 0%, rgba(239,1,124,1) 100%);
@@ -36,9 +21,11 @@ body {
     background: -ms-linear-gradient(left, rgba(255,93,177,1) 0%, rgba(239,1,124,1) 100%);
     background: linear-gradient(to right, rgba(255,93,177,1) 0%, rgba(239,1,124,1) 100%);
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff5db1', endColorstr='#ef017c', GradientType=1 );
-    transition:all 0.4s;
 }
-.login-link a:hover {
+.button:hover,
+button:hover,
+input[type="button"]:hover {
+    color:black;
     background: rgba(255,56,159,1);
     background: -moz-linear-gradient(left, rgba(255,56,159,1) 0%, rgba(213,1,111,1) 100%);
     background: -webkit-gradient(left top, right top, color-stop(0%, rgba(255,56,159,1)), color-stop(100%, rgba(213,1,111,1)));
@@ -47,28 +34,104 @@ body {
     background: -ms-linear-gradient(left, rgba(255,56,159,1) 0%, rgba(213,1,111,1) 100%);
     background: linear-gradient(to right, rgba(255,56,159,1) 0%, rgba(213,1,111,1) 100%);
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff389f', endColorstr='#d5016f', GradientType=1 );}
-.categories {
-    font-size: 3rem;
-    margin-top:20px;
+.button-default {
+    background: rgba(0,0,0,0.1);
+    color: inherit;
 }
-.categories ul {
-    margin:0px;
-    padding:0px;
-    list-style:none;
+.button-default:hover {
+    background: rgba(0,0,0,0.1);
+    color: #EF017C;
 }
-.categories li {
-    float:left;
-    text-indent:0;
+input,
+textarea,
+select {
+    width:100%;
 }
-.categories li+li {
-    margin-left:50px;
+.form-buttons {
+    margin-top:1em;
 }
-.categories a:link,
-.categories a:active,
-.categories a:visited {
+
+/*
+/   Custom styles
+*/
+
+body {
+    background: url('../images/footer_lodyas/footer_lodyas.png');
+}
+.banner {
+    color: white;
+    padding: 2% 5% 0 3%;
+    box-sizing: border-box;
+    background-image: url('../images/acoustic-925174_1920.jpg');
+    background-size: cover;
+    background-position: 0 -250px;
+    height: 180px;
+    border-bottom: 3px solid #EF017C;
+    text-align: center;
+}
+.title {
     color:white;
-    transition:all 0.2s;
+    font-family:'Lobster', cursive;
+    text-shadow: 4px 3px black;
 }
-.categories a:hover {
-    color:rgb(239,1,124);
+.title h1 {
+    font-size: 6rem;
+    line-height: 6rem;
+    margin-bottom: 1.4rem;
+}
+.title i {
+    color: #EF017C;
+}
+.login {
+    text-align:right;
+}
+.login a:link,
+.login a:active,
+.login a:visited {
+    text-decoration: none;
+    color: #EF017C;
+    text-shadow: 0px 0px 10px black;
+}
+.menu-trigger {
+    padding: 0.5em 20px;
+    color: #EF017C;
+    cursor: pointer;
+    background: rgba(0,0,0,0.2);
+}
+.menu-trigger:hover {
+}
+#menu {
+    display:none;
+}
+#menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+#menu li {
+    margin-bottom: 0;
+    padding:0;
+    border-bottom: 1px solid #222;
+    box-sizing: border-box;
+}
+#menu a:link,
+#menu a:active,
+#menu a:visited {
+    display: block;
+    width: 100%;
+    text-decoration: none;
+    color: #EF017C;
+    padding: 1rem 0 1rem 20px;
+    position: relative;
+}
+#menu a:after {
+    content: '>';
+    position: absolute;
+    right: 35px;
+    font-size: 2rem;
+    line-height: 2rem;
+    color: #222;
+}
+#menu a:hover {
+    background: rgba(0,0,0,0.2);
 }

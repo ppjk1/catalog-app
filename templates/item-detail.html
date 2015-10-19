@@ -1,0 +1,22 @@
+{% extends "main.html" %}
+{% block content %}
+
+<div class="breadcrumb">
+    <a href="/">Home</a> >
+    <a href="{{ url_for('showCategory', c_permalink = category.permalink) }}">{{ category.name }}</a>
+</div>
+
+<div>
+    <h4 class="item-name">{{ item.name }}</h4>
+    <p class="item-description">
+        {{ item.description }}
+        <img src="{{ url_for('static', filename='images/%s' % item.picture) }}">
+    </p>
+    <p>
+        <a href="{{ url_for('editItem', i_permalink = item.permalink) }}">Edit</a>
+        |
+        <a href="{{ url_for('deleteItem', i_permalink = item.permalink) }}">Delete</a>
+    </p>
+</div>
+
+{% endblock %}

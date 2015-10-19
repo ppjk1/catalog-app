@@ -1,0 +1,26 @@
+{% extends "main.html" %}
+{% block content %}
+
+<div class="menu-trigger"><i class="fa fa-bars"></i> Menu</div>
+<nav id="menu">
+    <ul>
+    {% for c in categories %}
+        <li><a href="{{ url_for('showCategory', c_permalink = c.permalink) }}">{{ c.name }}</a></li>
+    {% endfor %}
+    </ul>
+</nav>
+
+<a class="button" href="{{ url_for('newItem', c_permalink = category.permalink) }}">
+    Create New
+</a>
+
+{% for i in items %}
+<div>
+    <a href="{{ url_for('showItem',
+                        c_permalink = category.permalink,
+                        i_permalink = i.permalink) }}">{{ i.name }}</a>
+</div>
+{% endfor %}
+
+
+{% endblock %}
