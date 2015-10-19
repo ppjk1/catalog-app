@@ -1,31 +1,35 @@
 {% extends "main.html" %}
 {% block content %}
 
-<h4>Create a New Item</h4>
+<div class="container">
 
-<form action="#", method="post">
+    <h4>Create a New Item</h4>
 
-    <label for="category">Category:</label>
-    <select name="category" required>
-    {% for c in categories %}
-        <option value="{{ c.id }}">{{ c.name }}</option>
-    {% endfor %}
-    </select>
+    <form action="#", method="post">
 
-    <label for="name">Name:</label>
-    <input type="text" name="name" placeholder="Item name" required>
+        <label for="category">Category:</label>
+        <select name="category" required>
+        {% for c in categories %}
+            <option value="{{ c.id }}">{{ c.name }}</option>
+        {% endfor %}
+        </select>
 
-    <label for="description">Description:</label>
-    <textarea name="description" placeholder="Item description" required></textarea>
+        <label for="name">Name:</label>
+        <input type="text" name="name" placeholder="Item name" required>
 
-    <label for="picture">Picture:</label>
-    <input type="file" name="picture">
+        <label for="description">Description:</label>
+        <textarea name="description" placeholder="Item description" required></textarea>
 
-    <div class="form-buttons">
-        <button type="button" class="button-default" onclick="javascript:window.location='{{ url_for('index') }}'; return false;">Cancel</button>
-        <button type="submit">Create</button>
-    </div>
+        <label for="picture">Picture:</label>
+        <input type="file" name="picture">
 
-</form>
+        <div class="form-buttons">
+            <button type="button" class="button-default" onclick="javascript:window.location='{{ url_for('index') }}'; return false;">Cancel</button>
+            <button type="submit">Create</button>
+        </div>
+
+    </form>
+
+</div>
 
 {% endblock %}

@@ -10,17 +10,20 @@
     </ul>
 </nav>
 
-<a class="button" href="{{ url_for('newItem', c_permalink = category.permalink) }}">
-    Create New
-</a>
+<div class="container">
 
-{% for i in items %}
-<div>
-    <a href="{{ url_for('showItem',
-                        c_permalink = category.permalink,
-                        i_permalink = i.permalink) }}">{{ i.name }}</a>
+    <h4>{{ category.name }}</h4>
+    <p><a href="{{ url_for('newItem', c_permalink = category.permalink) }}">Create New</a></p>
+    <ul>
+        {% for i in items %}
+        <li>
+        <a href="{{ url_for('showItem',
+                            c_permalink = category.permalink,
+                            i_permalink = i.permalink) }}">{{ i.name }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+
 </div>
-{% endfor %}
-
 
 {% endblock %}

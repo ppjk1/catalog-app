@@ -10,4 +10,17 @@
     </ul>
 </nav>
 
+<div class="container">
+    <h4>Latest Items Added</h4>
+    <ul>
+        {% for l in latest %}
+        <li class="latest">
+            <a href="{{ url_for('showItem', c_permalink=l.category.permalink, i_permalink=l.permalink) }}">{{ l.name }}</a>
+            <br>
+            <span class="category">{{ l.category.name }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
 {% endblock %}

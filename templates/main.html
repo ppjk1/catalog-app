@@ -28,10 +28,15 @@
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
 <body>
-    <div class="banner">
-        <div class="login">
+    <header>
+        <div class="home u-pull-left">
+            <a href="/"><i class="fa fa-home"></i></a>
+        </div>
+        <div class="login u-pull-right">
             <a href="/login">Log In</a>
         </div>
+    </header>
+    <div class="banner">
         <div class="title">
             <h1>
                 <i class="fa fa-music" style="font-size:2rem; vertical-align:15px; letter-spacing:-15px;"></i>
@@ -42,6 +47,11 @@
     </div>
 
     {% block content %}{% endblock %}
+
+    <footer>
+        <img src="{{ url_for('static', filename='images/Udacity_Logo.svg') }}">
+        <span>A Udacity Full Stack Web Developer Nanodegree Student Project by <a href="https://profiles.udacity.com/u/jonathanhunter">Jonathan Hunter</a></span>
+    </footer>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="{{ url_for('static', filename='js/menu.js') }}"></script>

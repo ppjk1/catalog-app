@@ -1,5 +1,6 @@
 import datetime
-from flask import Flask, session, redirect, render_template, request, url_for, flash, jsonify
+from flask import Flask, session, redirect, render_template, request, url_for,\
+    flash, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from dbsetup import Base, User, Category, Item
@@ -17,7 +18,9 @@ dbsession = DBSession()
 @app.route('/catalog')
 def index():
     categories = dbsession.query(Category).all()
-    return render_template('index.html', categories=categories)
+    latest = dbsession.query(Item).order_by(Item.created_at.desc()).limit(10).all()
+    return render_template('index.html', categories=categories,
+        latest = latest)
 
 
 @app.route('/catalog/<string:c_permalink>/items')

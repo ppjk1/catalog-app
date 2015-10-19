@@ -1,38 +1,42 @@
 {% extends "main.html" %}
 {% block content %}
 
-<h4>Edit Item</h4>
+<div class="container">
 
-<form action="#", method="post">
+    <h4>Edit Item</h4>
 
-    <label for="category">Category:</label>
-    <select name="category">
-    {% for c in categories %}
-        <option value="{{ c.id }}"
-        {% if c.id == item.category_id %}
-            selected
-        {% endif %}
-        >{{ c.name }}</option>
-    {% endfor %}
-    </select>
+    <form action="#", method="post">
 
-    <label for="name">Name:</label>
-    <input type="text" name="name" placeholder="{{ item.name }}">
+        <label for="category">Category:</label>
+        <select name="category">
+        {% for c in categories %}
+            <option value="{{ c.id }}"
+            {% if c.id == item.category_id %}
+                selected
+            {% endif %}
+            >{{ c.name }}</option>
+        {% endfor %}
+        </select>
 
-    <label for="description">Description:</label>
-    <textarea name="description">{{ item.description }}</textarea>
+        <label for="name">Name:</label>
+        <input type="text" name="name" placeholder="{{ item.name }}">
 
-    <label>Current Picture:</label>
-    <img src="{{ url_for('static', filename='images/%s' % item.picture) }}">
+        <label for="description">Description:</label>
+        <textarea name="description">{{ item.description }}</textarea>
 
-    <label for="picture">Choose a Different Picture:</label>
-    <input type="file" name="picture">
+        <label>Current Picture:</label>
+        <img src="{{ url_for('static', filename='images/%s' % item.picture) }}">
 
-    <div class="form-buttons">
-        <button type="button" class="button-default" onclick="javascript:window.location='{{ url_for('showItem', c_permalink = category.permalink, i_permalink = item.permalink) }}'; return false;">Cancel</button>
-        <button type="submit">Update</button>
-    </div>
+        <label for="picture">Choose a Different Picture:</label>
+        <input type="file" name="picture">
 
-</form>
+        <div class="form-buttons">
+            <button type="button" class="button-default" onclick="javascript:window.location='{{ url_for('showItem', c_permalink = category.permalink, i_permalink = item.permalink) }}'; return false;">Cancel</button>
+            <button type="submit">Update</button>
+        </div>
+
+    </form>
+
+</div>
 
 {% endblock %}
