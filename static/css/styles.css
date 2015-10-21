@@ -75,11 +75,9 @@ form img {
 /*
 /   Custom styles
 */
-
 body {
     background: url('../images/footer_lodyas/footer_lodyas.png');
     color: #aaa;
-    margin: 0 auto;
 }
 header {
     background: rgba(0,0,0,0.2);
@@ -184,6 +182,7 @@ header a:hover {
 footer {
     font-size: small;
     text-align: left;
+    margin-top: 20px;
     padding: 0 20px 10px 20px;
 }
 footer img {

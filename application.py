@@ -1,17 +1,93 @@
+import httplib2
+import json
 import datetime
+
 from flask import Flask, session, redirect, render_template, request, url_for,\
     flash, jsonify
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
 from dbsetup import Base, User, Category, Item
+
+from oauth2client import client
+from apiclient import discovery
 
 app = Flask(__name__)
 
-engine = create_engine('sqlite:///catalog.db', echo=True)
+engine = create_engine('sqlite:///catalog.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 dbsession = DBSession()
+
+
+@app.route('/glogin')
+def glogin():
+    if 'credentials' not in session:
+        return redirect(url_for('goauth2redirect'))
+    credentials = client.OAuth2Credentials.from_json(session['credentials'])
+    if credentials.access_token_expired:
+        return redirect(url_for('goauth2redirect'))
+    else:
+        http_auth = credentials.authorize(httplib2.Http())
+        service = discovery.build('oauth2', 'v2', http=http_auth)
+        request = service.userinfo().v2().me().get()
+        response = request.execute()
+        session['provider'] = 'google'
+        session['username'] = response['name']
+        session['google_id'] = response['id']
+        session['picture'] = response['picture']
+        session['email'] = response['email']
+
+        # See if user exists
+        user_id = getUserID(session['email'])
+        if not user_id:
+            user_id = createUser(session)
+        session['user_id'] = user_id
+
+    return json.dumps(response)
+    #return redirect(url_for('index'))
+
+
+@app.route('/goauth2redirect')
+def goauth2redirect():
+    flow = client.flow_from_clientsecrets(
+          'g_client_secrets.json',
+          scope=['https://www.googleapis.com/auth/plus.me',
+                 'https://www.googleapis.com/auth/userinfo.email'],
+          redirect_uri=url_for('goauth2redirect', _external=True))
+    if 'code' not in request.args:
+        auth_uri = flow.step1_get_authorize_url()
+        return redirect(auth_uri)
+    else:
+        auth_code = request.args.get('code')
+        credentials = flow.step2_exchange(auth_code)
+        session['credentials'] = credentials.to_json()
+        return redirect(url_for('glogin'))
+
+
+# User helper functions
+
+def createUser(session):
+    newUser = User(
+                name=session['username'],
+                email=session['email'],
+                picture=session['picture'])
+    dbsession.add(newUser)
+    dbsession.flush()
+    dbsession.commit()
+    print "NEW USER ID: %s" % newUser.id
+    return newUser.id
+
+
+def getUserID(email):
+    try:
+        user = dbsession.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
+
 
 
 @app.route('/')

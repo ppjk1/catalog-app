@@ -10,7 +10,7 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
-user1 = User(name="Jonathan Hunter", email="popejacki@gmail.com")
+user1 = User(name="Autobot", email="autobot@hotbot.com")
 
 category1 = Category(name="Acoustic Guitars", permalink="acoustic-guitars")
 category2 = Category(name="Electric Guitars", permalink="electric-guitars")
