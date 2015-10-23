@@ -33,7 +33,25 @@
             <a href="/"><i class="fa fa-home"></i></a>
         </div>
         <div class="login u-pull-right">
-            <a href="/login">Log In</a>
+            {% if 'username' not in session %}
+                <a id="login-link" href="#">Log In</a>
+                <div class="login-popup">
+                    <ul>
+                        <li><a href="/glogin">
+                                <img src="static/images/Google_plus.svg"><br>Google+
+                            </a>
+                        </li>
+                        <li>
+                            <a href="fblogin">
+                                <img src="static/images/F_icon.svg"><br>Facebook
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="u-cf"></div>
+                </div>
+            {% else %}
+                <img class="user-picture" src="{{ session['picture'] }}" alt="{{ session['username'] }}"> <a href="/logout">Log Out</a>
+            {% endif %}
         </div>
     </header>
     <div class="banner">
@@ -48,9 +66,22 @@
 
     {% block content %}{% endblock %}
     <div class="u-cf"></div>
+
     <footer>
-        <img src="{{ url_for('static', filename='images/Udacity_Logo.svg') }}">
-        <span>A Udacity Full Stack Web Developer Nanodegree Student Project by <a href="https://profiles.udacity.com/u/jonathanhunter">Jonathan Hunter</a></span>
+        <div class="copyright">
+            <img src="{{ url_for('static', filename='images/Udacity_Logo.svg') }}" align="left">
+            <span>A Udacity Full Stack Web Developer Nanodegree Student Project by <a href="https://profiles.udacity.com/u/jonathanhunter">Jonathan Hunter</a></span>
+        </div>
+        <div class="extra-links">
+            {% if 'provider' in session %}
+            <a href="/deauthorize">Deauthorize 3rd-party authentication providers</a><br>
+            {% endif %}
+            Download Catalog:
+            <a href="{{ url_for('indexJSON') }}">JSON</a>
+            | <a href="{{ url_for('indexXML') }}">XML</a>
+            | <a href="{{ url_for('indexATOM') }}">ATOM</a>
+        </div>
+        <div class="u-cf"></div>
     </footer>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>

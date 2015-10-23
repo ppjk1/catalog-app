@@ -22,6 +22,7 @@ a:hover {
     background: #EF017C;
     text-shadow: none;
 }
+a.button,
 .button,
 button,
 input[type="button"] {
@@ -98,6 +99,16 @@ header a:hover {
     color: #EF017C;
     background: none;
 }
+.login {
+    position: relative;
+}
+.login .user-picture {
+    width: 25px;
+    vertical-align: middle;
+    border-radius: 15px;
+    margin-top: -2px;
+    margin-right: 10px;
+}
 .banner {
     color: white;
     box-sizing: border-box;
@@ -172,6 +183,10 @@ header a:hover {
     font-style: italic;
     padding-left: 1em;
 }
+.breadcrumb {
+    margin-top: -10px;
+    margin-bottom: 20px;
+}
 .item-picture {
     margin-left: -20px;
     margin-right: -20px;
@@ -182,7 +197,8 @@ header a:hover {
 footer {
     font-size: small;
     text-align: left;
-    margin-top: 20px;
+    margin-top: 30px;
+    margin-bottom: 10px;
     padding: 0 20px 10px 20px;
 }
 footer img {
@@ -191,6 +207,47 @@ footer img {
     margin-top: 4px;
     float:left;
 }
+footer .extra-links {
+    margin-top: 10px;
+}
+.login-popup {
+    display: none;
+    position: absolute;
+    top: 30px;
+    right: 0;
+    width: 160px;
+    padding: 10px 30px 0 30px;
+    background: white;
+    box-shadow: 5px 5px black;
+    color: #222;
+    text-align: center;
+}
+.login-popup ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.login-popup li {
+    float: left;
+    margin-bottom: 0;
+}
+.login-popup li+li {
+    margin-left: 30px;
+}
+.login-popup a:link {
+    text-shadow: none;
+    color: #222;
+}
+.login-popup a:hover {
+    color: #EF017C;
+}
+.login-popup img {
+    width: 50px;
+    height: 50px;
+}
+
+
+
 @media (min-width: 480px) {
     footer img {
         margin-top: -5px; }
@@ -207,6 +264,9 @@ footer img {
     #menu {
         max-width: 300px;
     }
+    footer .extra-links {
+        margin-top: 20px;
+    }
 }
 
 @media (min-width: 800px) {
@@ -219,6 +279,8 @@ footer img {
     #menu {
         display: block;
         float: left;
+        box-sizing: border-box;
+        width: 200px;
         border-right: 2px solid #EF017C;
         box-shadow: 4px 5px black;
     }
@@ -230,9 +292,9 @@ footer img {
     }
     .container {
         float: left;
-        max-width: 70%;
         padding-left: 30px;
         padding-top: 10px;
+        width: 600px;
     }
     .container-full {
         max-width: 100%;
@@ -253,5 +315,19 @@ footer img {
         border: 1px solid black;
         box-shadow: 6px 6px black;
         max-width:640px;
+    }
+}
+
+@media (min-width: 960px) {
+    .container {
+        width: inherit;
+    }
+    footer .copyright {
+        float: left;
+    }
+    footer .extra-links {
+        float: right;
+        margin-top: 0;
+        text-align: right;
     }
 }

@@ -38,6 +38,7 @@ item1 = Item(name = "Awesome Acoustic Guitar",
              description = "An awesome acoustic guitar.",
              picture = "acoustic-guitar.jpg",
              created_at = datetime.datetime.now(),
+             updated_at = datetime.datetime.now(),
              category = category1,
              user = user1)
 
@@ -46,6 +47,7 @@ item2 = Item(name = "Sublime Electric Guitar",
              description = "A sublime electric guitar.",
              picture = "electric-guitar.jpg",
              created_at = datetime.datetime.now(),
+             updated_at = datetime.datetime.now(),
              category = category2,
              user = user1)
 
@@ -54,6 +56,7 @@ item3 = Item(name = "Wunderkind Bass Guitar",
              description = "A bass guitar for wunderkinds.",
              picture = "bass-guitar.jpg",
              created_at = datetime.datetime.now(),
+             updated_at = datetime.datetime.now(),
              category = category3,
              user = user1)
 
@@ -62,6 +65,7 @@ item4 = Item(name = "Unholy Ukelele",
              description = "An unholy ukelele.",
              picture = "ukelele.jpg",
              created_at = datetime.datetime.now(),
+             updated_at = datetime.datetime.now(),
              category = category4,
              user = user1)
 
@@ -70,6 +74,7 @@ item5 = Item(name = "Merry Mandolin",
              description = "The merriest of mandolins.",
              picture = "mandolin.jpg",
              created_at = datetime.datetime.now(),
+             updated_at = datetime.datetime.now(),
              category = category5,
              user = user1)
 
@@ -78,6 +83,7 @@ item6 = Item(name = "Blistering Banjo",
              description = "A blistering banjo.",
              picture = "banjo.jpg",
              created_at = datetime.datetime.now(),
+             updated_at = datetime.datetime.now(),
              category = category6,
              user = user1)
 
@@ -86,6 +92,7 @@ item7 = Item(name = "High Altitude Amplifier",
              description = "A guitar amp for the heights.",
              picture = "guitar-amp.jpg",
              created_at = datetime.datetime.now(),
+             updated_at = datetime.datetime.now(),
              category = category7,
              user = user1)
 
@@ -94,6 +101,7 @@ item8 = Item(name = "Effects Pedals in Triplicate",
              description = "More effects pedals than you could ever want.",
              picture = "pedals.jpg",
              created_at = datetime.datetime.now(),
+             updated_at = datetime.datetime.now(),
              category = category8,
              user = user1)
 
@@ -102,6 +110,7 @@ item9 = Item(name = "The Pounding Drums",
              description = "A drum for every occasion.",
              picture = "drums.jpg",
              created_at = datetime.datetime.now(),
+             updated_at = datetime.datetime.now(),
              category = category9,
              user = user1)
 

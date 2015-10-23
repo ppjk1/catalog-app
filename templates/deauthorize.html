@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Basic Page Needs
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <meta charset="utf-8">
+    <meta name="description" content="A simple app to demonstrate CRUD operations and user authentication and authorization.">
+    <meta name="author" content="Jonathan Hunter">
+
+    <!-- Mobile Specific Metas
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- FONT
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link href='//fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+    <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+    <!-- CSS
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/skeleton.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+    <!-- Favicon
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+</head>
+<body>
+    <header>
+        <div class="home u-pull-left">
+            <a href="/"><i class="fa fa-home"></i></a>
+        </div>
+    </header>
+
+    <div class="title" style="text-align:center">
+        <h3>
+            <i class="fa fa-music" style="font-size:1rem; vertical-align:15px; letter-spacing:-15px;"></i>
+            <i class="fa fa-music" style="font-size:2rem; vertical-align:middle;"></i>
+             Music for the Masses
+        </h3>
+    </div>
+
+    <div style="text-align:center; margin-top:5%;">
+        <p><a class="button" href="/disconnect">Deauthorize <span style="text-decoration:underline">{{ provider }}</span> permissions</a></p>
+    </div>
+
+    <footer style="position:fixed; bottom:0;">
+        <img src="{{ url_for('static', filename='images/Udacity_Logo.svg') }}">
+        <span>A Udacity Full Stack Web Developer Nanodegree Student Project by <a href="https://profiles.udacity.com/u/jonathanhunter">Jonathan Hunter</a></span>
+    </footer>
+
+</body>
+</html>
