@@ -379,17 +379,18 @@ def indexJSON():
     return jsonify(Categories=catalog)
 
 
-@app.route('/atom')
-@app.route('/catalog/atom')
-def indexATOM():
+@app.route('/xml')
+@app.route('/catalog/xml')
+def indexXML():
     categories = dbsession.query(Category).all()
     catalog = []
     for c in categories:
         catalog.append(c.serialize)
         items = dbsession.query(Item).filter_by(category_id=c.id).all()
         catalog[-1]['items'] = [i.serialize for i in items]
-    return render_template('catalog.xml', catalog=catalog)
-
+    response = make_response(render_template('catalog.xml', catalog=catalog))
+    response.headers['Content-Type'] = 'application/xml'
+    return response
 
 
 if __name__ == "__main__":

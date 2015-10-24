@@ -271,7 +271,7 @@ footer .extra-links {
 
 @media (min-width: 480px) {
     footer img {
-        margin-top: 5px; }
+        margin-top: -5px; }
 }
 
 
