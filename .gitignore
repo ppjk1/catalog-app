@@ -6,6 +6,10 @@
 ######################
 .DS_Store
 
+# Logs and databases #
+######################
+*.db
+
 # Secrets #
 ###########
 fb_client_secrets.json
