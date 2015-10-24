@@ -28,6 +28,16 @@
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
 <body>
+    <div class="flash">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <p> {{ message }} </p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
     <header>
         <div class="home u-pull-left">
             <a href="/"><i class="fa fa-home"></i></a>
@@ -37,13 +47,13 @@
                 <a id="login-link" href="#">Log In</a>
                 <div class="login-popup">
                     <ul>
-                        <li><a href="/glogin">
-                                <img src="static/images/Google_plus.svg"><br>Google+
+                        <li><a href="{{ url_for('glogin') }}">
+                                <img src="{{ url_for('static', filename='images/Google_plus.svg') }}"><br>Google+
                             </a>
                         </li>
                         <li>
-                            <a href="fblogin">
-                                <img src="static/images/F_icon.svg"><br>Facebook
+                            <a href="{{ url_for('fblogin') }}">
+                                <img src="{{ url_for('static', filename='images/F_icon.svg') }}"><br>Facebook
                             </a>
                         </li>
                     </ul>
@@ -78,7 +88,6 @@
             {% endif %}
             Download Catalog:
             <a href="{{ url_for('indexJSON') }}">JSON</a>
-            | <a href="{{ url_for('indexXML') }}">XML</a>
             | <a href="{{ url_for('indexATOM') }}">ATOM</a>
         </div>
         <div class="u-cf"></div>

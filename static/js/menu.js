@@ -16,4 +16,8 @@ $(document).ready(function(){
         $('#menu').toggle(400);
     });
 
+    $('.flash').on('click', function(){
+        $(this).remove();
+    });
+
 });

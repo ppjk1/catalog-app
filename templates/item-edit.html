@@ -5,7 +5,7 @@
 
     <h4>Edit Item</h4>
 
-    <form action="#", method="post">
+    <form action="#", method="post" enctype="multipart/form-data">
 
         <label for="category">Category:</label>
         <select name="category">
@@ -24,11 +24,17 @@
         <label for="description">Description:</label>
         <textarea name="description">{{ item.description }}</textarea>
 
+        {% if item.picture %}
         <label>Current Picture:</label>
         <img src="{{ url_for('static', filename='images/%s' % item.picture) }}">
 
         <label for="picture">Choose a Different Picture:</label>
+        {% else %}
+        <label for="picture">Choose a Picture:</label>
+        {% endif %}
         <input type="file" name="picture">
+
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
 
         <div class="form-buttons">
             <button type="button" class="button-default" onclick="javascript:window.location='{{ url_for('showItem', c_permalink = category.permalink, i_permalink = item.permalink) }}'; return false;">Cancel</button>

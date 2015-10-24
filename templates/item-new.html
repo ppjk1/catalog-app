@@ -5,7 +5,7 @@
 
     <h4>Create a New Item</h4>
 
-    <form action="#", method="post">
+    <form action="#", method="post" enctype="multipart/form-data">
 
         <label for="category">Category:</label>
         <select name="category" required>
@@ -22,6 +22,8 @@
 
         <label for="picture">Picture:</label>
         <input type="file" name="picture">
+
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
 
         <div class="form-buttons">
             <button type="button" class="button-default" onclick="javascript:window.location='{{ url_for('index') }}'; return false;">Cancel</button>

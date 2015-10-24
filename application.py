@@ -1,9 +1,12 @@
+import os
 import httplib2
 import json
 import datetime
 
 from flask import Flask, session, redirect, render_template, request, url_for,\
-    flash, jsonify
+    flash, jsonify, make_response
+from werkzeug import secure_filename
+from flask.ext.seasurf import SeaSurf
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -13,7 +16,12 @@ from dbsetup import Base, User, Category, Item
 from oauth2client import client
 from apiclient import discovery
 
+UPLOAD_FOLDER = '/vagrant/catalog/static/images'
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+csrf = SeaSurf(app)
 
 engine = create_engine('sqlite:///catalog.db')
 Base.metadata.bind = engine
@@ -22,38 +30,34 @@ DBSession = sessionmaker(bind=engine)
 dbsession = DBSession()
 
 
-# Retrieve app_id and app_secret for Facebook
-FB_APP_ID = json.loads(open('fb_client_secrets.json', 'r').read())['web']['app_id']
-FB_APP_SECRET = json.loads(open('fb_client_secrets.json', 'r').read())[
-    'web']['app_secret']
-
-
 # Login/authorize routes and functions
-
-
-@app.route('/login')
-def login():
-    if request.args.get('permanent') == 'true':
-        # Stores session for default 31 days (unless user logs out)
-        session.permanent = True
 
 
 @app.route('/fblogin')
 def fblogin():
+
     if 'facebook_token' not in session:
-        # note: should add 'state' parameter to this redirect for anti-CSRF
-        return redirect('https://www.facebook.com/dialog/oauth?client_id=%s&redirect_uri=http://localhost:8000/fboauth2redirect&scope=public_profile,email' % FB_APP_ID)
-    #   Fetch user data, check for user (create if none), and redirect to index
+        app_id = json.loads(open('fb_client_secrets.json', 'r').read())[
+            'web']['app_id']
+        return redirect('https://www.facebook.com/dialog/oauth?client_id=%s&redirect_uri=http://localhost:8000/fboauth2redirect&scope=public_profile,email' % app_id)
+
+    # Fetch user data
     token = session['facebook_token']['access_token']
     url = 'https://graph.facebook.com/v2.5/me?access_token=%s&fields=name,id,email,picture' % (token)
     h = httplib2.Http()
     data = json.loads(h.request(url, 'GET')[1])
-#    if 'error' in data:
-        # handle error
-#        pass
+
+    if 'error' in data:
+        response = make_response(json.dumps(data), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+
     if data['id'] != session['facebook_id']:
-        #handle error
-        pass
+        response = make_response(json.dumps(
+            "Token's user id doesn't match given user id."), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+
     session['provider'] = 'facebook'
     session['username'] = data['name']
     session['email'] = data['email']
@@ -70,32 +74,45 @@ def fblogin():
 
 @app.route('/fboauth2redirect')
 def fboauth2redirect():
+    # User denied Facebook auth request
+    if 'error' in request.args:
+        return redirect(url_for('index'))
+
     # Retrieve authentication code
-    try:
-        auth_code = request.args.get('code')
-    except:
-        # JH- need to handle error here
-        # See: https://developers.facebook.com/docs/facebook-login/permissions/#missingperms
-        return None
+    auth_code = request.args.get('code')
+
+    # Retrieve app_id and app_secret for Facebook
+    app_id = json.loads(open('fb_client_secrets.json', 'r').read())[
+        'web']['app_id']
+    app_secret = json.loads(open('fb_client_secrets.json', 'r').read())[
+        'web']['app_secret']
 
     # Exchange auth code for user access token
-    url = 'https://graph.facebook.com/v2.3/oauth/access_token?client_id=%s&redirect_uri=http://localhost:8000/fboauth2redirect&client_secret=%s&code=%s' % (FB_APP_ID, FB_APP_SECRET, auth_code)
+    url = 'https://graph.facebook.com/v2.3/oauth/access_token?client_id=%s&redirect_uri=http://localhost:8000/fboauth2redirect&client_secret=%s&code=%s' % (app_id, app_secret, auth_code)
     h = httplib2.Http()
     result = json.loads(h.request(url, 'GET')[1])
     if 'access_token' in result:
         session['facebook_token'] = result
+    elif 'error' in result:
+        response = make_response(json.dumps(result), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
 
     # Verify user access token
     token = session['facebook_token']['access_token']
-    url = 'https://graph.facebook.com/debug_token?input_token=%s&key=value&access_token=%s|%s' % (token, FB_APP_ID, FB_APP_SECRET)
+    url = 'https://graph.facebook.com/debug_token?input_token=%s&key=value&access_token=%s|%s' % (token, app_id, app_secret)
     h = httplib2.Http()
     data = json.loads(h.request(url, 'GET')[1])['data']
-    if data['app_id'] != FB_APP_ID:
-        # handle error
-        pass
+    if data['app_id'] != app_id:
+        response = make_response(json.dumps(
+            'Failed to verify the access token.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
     if data['is_valid'] != True:
-        # handle error
-        pass
+        response = make_response(json.dumps(
+            'Access token is no longer valid.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
     session['facebook_id'] = data['user_id']
     return redirect(url_for('fblogin'))
 
@@ -167,6 +184,15 @@ def getUserID(email):
 
 
 # Log out and deauthorize routes/functions
+#
+#   Follows Facebook recommended best practices:
+#
+#   - By default, only delete session data on the server. The user should not
+#     have to reauthorize your app every time they log in.
+#
+#   - Provide separate mechanism for disabling 3rd party authorization,
+#     available via link at bottom of page.
+
 
 @app.route('/logout')
 def logout():
@@ -198,7 +224,7 @@ def fblogout():
     access_token = session['facebook_token']['access_token']
     url = 'https://graph.facebook.com/%s/permissions?access_token=%s' % (facebook_id, access_token)
     h = httplib2.Http()
-    result = h.request(url, 'DELETE')[1]
+    h.request(url, 'DELETE')[1]
 
 
 # Primary routes
@@ -213,7 +239,7 @@ def index():
         latest = latest)
 
 
-@app.route('/catalog/<string:c_permalink>/items')
+@app.route('/catalog/<string:c_permalink>')
 def showCategory(c_permalink):
     categories = dbsession.query(Category).all()
     for c in categories:
@@ -236,16 +262,26 @@ def showItem(c_permalink, i_permalink):
 
 @app.route('/catalog/<string:c_permalink>/new', methods=['POST', 'GET'])
 def newItem(c_permalink):
+    if 'username' not in session:
+        flash('Please log in to add new items.')
+        return redirect(url_for('index'))
     if request.method == 'POST':
         newItem = Item(
-            category_id=request.form['category'],
+            category_id=int(request.form['category']),
             name=request.form['name'],
             permalink=request.form['name'].lower().replace(' ', '-').translate("'"),
             description=request.form['description'],
             created_at=datetime.datetime.now(),
-            user_id=1)
+            user_id=session['user_id'])
+        # Handle picture upload (if present)
+        file = request.files['picture']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            newItem.picture=filename
         dbsession.add(newItem)
         dbsession.commit()
+        flash('Item successfully created.')
         return redirect(url_for('showCategory', c_permalink=c_permalink))
     else:
         categories = dbsession.query(Category).all()
@@ -254,12 +290,18 @@ def newItem(c_permalink):
 
 @app.route('/catalog/<string:i_permalink>/edit', methods=['POST', 'GET'])
 def editItem(i_permalink):
+    if 'username' not in session:
+        flash('Please log in to manage your items.')
+        return redirect(url_for('index'))
     item = dbsession.query(Item).filter_by(permalink=i_permalink).one()
     categories = dbsession.query(Category).all()
     for c in categories:
         if c.id == item.category_id:
             category = c
             break
+    if item.user_id != session['user_id']:
+        return redirect(url_for('showItem', c_permalink = category.permalink,
+            i_permalink = item.permalink))
     if request.method == 'POST':
         if request.form['category']:
             item.category_id = request.form['category']
@@ -269,8 +311,20 @@ def editItem(i_permalink):
         if request.form['description']:
             item.description = request.form['description']
         item.updated_at = datetime.datetime.now()
+        # Handle picture upload (if present)
+        file = request.files['picture']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            # Remove old photo from filesystem
+            if item.picture:
+                path = "%s/%s" % (app.config['UPLOAD_FOLDER'], item.picture)
+                os.remove(path)
+            # Overwrite item's picture
+            item.picture=filename
         dbsession.add(item)
         dbsession.commit()
+        flash('Item succesfully updated.')
         return redirect(
             url_for('showCategory', c_permalink=category.permalink))
     else:
@@ -278,14 +332,32 @@ def editItem(i_permalink):
                                categories=categories, item=item)
 
 
+# File upload utility function
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+
 @app.route('/catalog/<string:i_permalink>/delete', methods=['POST', 'GET'])
 def deleteItem(i_permalink):
+    if 'username' not in session:
+        flash('Please log in to manage your items.')
+        return redirect(url_for('index'))
     item = dbsession.query(Item).filter_by(permalink=i_permalink).one()
     category = dbsession.query(Category).filter_by(
         id=item.category_id).one()
+    if item.user_id != session['user_id']:
+        return redirect(url_for('showItem', c_permalink=category.permalink,
+            i_permalink=item.permalink))
     if request.method == 'POST':
+        # Delete item's picture from filesystem
+        if item.picture:
+            path = "%s/%s" % (app.config['UPLOAD_FOLDER'], item.picture)
+            os.remove(path)
+        # Delete item from database
         dbsession.delete(item)
         dbsession.commit()
+        flash('Item successfully deleted.')
         return redirect(
             url_for('showCategory', c_permalink=category.permalink))
     else:
@@ -307,25 +379,17 @@ def indexJSON():
     return jsonify(Categories=catalog)
 
 
-@app.route('/catalog/<string:c_permalink>/json')
-def showCategoryJSON(c_permalink):
-    category = dbsession.query(Category).filter_by(permalink=c_permalink).one()
-    items = dbsession.query(Item).filter_by(category_id=category.id)
-    return jsonify(
-        Category=category.name,
-        Items=[i.serialize for i in items])
-
-
-@app.route('/xml')
-@app.route('/catalog/xml')
-def indexXML():
-    pass
-
-
 @app.route('/atom')
 @app.route('/catalog/atom')
 def indexATOM():
-    pass
+    categories = dbsession.query(Category).all()
+    catalog = []
+    for c in categories:
+        catalog.append(c.serialize)
+        items = dbsession.query(Item).filter_by(category_id=c.id).all()
+        catalog[-1]['items'] = [i.serialize for i in items]
+    return render_template('catalog.xml', catalog=catalog)
+
 
 
 if __name__ == "__main__":

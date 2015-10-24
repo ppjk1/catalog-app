@@ -11,15 +11,27 @@
     <div class="item-info">
         <h4>{{ item.name }}</h4>
         <p>{{ item.description }}</p>
-        <p>
-            <a href="{{ url_for('editItem', i_permalink = item.permalink) }}">Edit</a>
-            |
-            <a href="{{ url_for('deleteItem', i_permalink = item.permalink) }}">Delete</a>
-        </p>
+
+        {% if 'username' in session and session['user_id'] == item.user_id %}
+            <p>
+                <a href="{{ url_for('editItem', i_permalink = item.permalink) }}">Edit</a>
+                |
+                <a href="{{ url_for('deleteItem', i_permalink = item.permalink) }}">Delete</a>
+            </p>
+        {% endif %}
+
     </div>
+
     <div class="item-picture">
+        {% if item.picture %}
         <img src="{{ url_for('static', filename='images/%s' % item.picture) }}">
+        {% else %}
+        <!-- A hack to get the .item-info block to render at proper width
+            when no picture is present -->
+        <div style="display:block; width:640px; height:280px; max-width:640px;"></div>
+        {% endif %}
     </div>
+
 </div>
 
 {% endblock %}

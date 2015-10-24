@@ -12,7 +12,11 @@
 
 <div class="container">
     <h4>{{ category.name }}</h4>
-    <p><a href="{{ url_for('newItem', c_permalink = category.permalink) }}">Create New</a></p>
+
+    {% if 'username' in session %}
+        <p><a href="{{ url_for('newItem', c_permalink = category.permalink) }}">Create New</a></p>
+    {% endif %}
+
     <ul>
         {% for i in items %}
         <li>
