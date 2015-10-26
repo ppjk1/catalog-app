@@ -22,7 +22,7 @@ class Category(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
-    permalink = Column(String(80), nullable=False)
+    permalink = Column(String(80), nullable=False, unique=True)
 
     @property
     def serialize(self):
@@ -41,7 +41,7 @@ class Item(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
     description = Column(String(250))
-    permalink = Column(String(80), nullable=False)
+    permalink = Column(String(80), nullable=False, unique=True)
     picture = Column(String(250))
     created_at = Column(TIMESTAMP, nullable=False)
     updated_at = Column(TIMESTAMP)

@@ -16,26 +16,31 @@ from dbsetup import Base, User, Category, Item
 from oauth2client import client
 from apiclient import discovery
 
+# Configuration for picture uploads
 UPLOAD_FOLDER = '/vagrant/catalog/static/images'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
+# Configure app and extensions
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 csrf = SeaSurf(app)
 
+# Connect to database
 engine = create_engine('sqlite:///catalog.db')
 Base.metadata.bind = engine
 
+# Create database session
 DBSession = sessionmaker(bind=engine)
 dbsession = DBSession()
 
 
 # Login/authorize routes and functions
 
-
+# Facebook login handler
 @app.route('/fblogin')
 def fblogin():
 
+    # If not logged in, redirect to Facebook login
     if 'facebook_token' not in session:
         app_id = json.loads(open('fb_client_secrets.json', 'r').read())[
             'web']['app_id']
@@ -71,14 +76,15 @@ def fblogin():
 
     return redirect(url_for('index'))
 
-
+# Facebook auth redirect
 @app.route('/fboauth2redirect')
 def fboauth2redirect():
+
     # User denied Facebook auth request
     if 'error' in request.args:
         return redirect(url_for('index'))
 
-    # Retrieve authentication code
+    # Retrieve authentication code returned by Facebook
     auth_code = request.args.get('code')
 
     # Retrieve app_id and app_secret for Facebook
@@ -116,19 +122,24 @@ def fboauth2redirect():
     session['facebook_id'] = data['user_id']
     return redirect(url_for('fblogin'))
 
-
+# Google login handler
 @app.route('/glogin')
 def glogin():
+
+    # If not logged in, redirect to Google login
     if 'credentials' not in session:
         return redirect(url_for('goauth2redirect'))
+
     credentials = client.OAuth2Credentials.from_json(session['credentials'])
     if credentials.access_token_expired:
         return redirect(url_for('goauth2redirect'))
     else:
+        # Authorize and build a service object to retrieve user data
         http_auth = credentials.authorize(httplib2.Http())
         service = discovery.build('oauth2', 'v2', http=http_auth)
         request = service.userinfo().v2().me().get()
         response = request.execute()
+
         session['provider'] = 'google'
         session['username'] = response['name']
         session['google_id'] = response['id']
@@ -144,17 +155,22 @@ def glogin():
     return redirect(url_for('index'))
 
 
+# Google auth redirect
 @app.route('/goauth2redirect')
 def goauth2redirect():
+
+    # Build a flow object
     flow = client.flow_from_clientsecrets(
           'g_client_secrets.json',
           scope=['https://www.googleapis.com/auth/plus.me',
                  'https://www.googleapis.com/auth/userinfo.email'],
           redirect_uri=url_for('goauth2redirect', _external=True))
     if 'code' not in request.args:
+        # Get authorization code via redirect to Google authorization page
         auth_uri = flow.step1_get_authorize_url()
         return redirect(auth_uri)
     else:
+        # Upgrade authorization code for credentials object
         auth_code = request.args.get('code')
         credentials = flow.step2_exchange(auth_code)
         session['credentials'] = credentials.to_json()
@@ -169,9 +185,9 @@ def createUser(session):
                 email=session['email'],
                 picture=session['picture'])
     dbsession.add(newUser)
+    # Flushing allows us to grab the new id before committing.
     dbsession.flush()
     dbsession.commit()
-    print "NEW USER ID: %s" % newUser.id
     return newUser.id
 
 
@@ -191,20 +207,24 @@ def getUserID(email):
 #     have to reauthorize your app every time they log in.
 #
 #   - Provide separate mechanism for disabling 3rd party authorization,
-#     available via link at bottom of page.
+#     available via footer link.
 
 
+# Clears the session. Does NOT revoke 3rd party authorizations.
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('index'))
 
 
+# Redirects to a deauthorization confirmation page.
 @app.route('/deauthorize')
 def deauthorize():
     return render_template('deauthorize.html', provider=session['provider'])
 
 
+# Calls appropriate deauthorization function and then redirects to logout to
+# clear the session.
 @app.route('/disconnect')
 def disconnect():
     if session['provider'] == 'google':
@@ -214,11 +234,13 @@ def disconnect():
     return redirect(url_for('logout'))
 
 
+# Deauthorize Google
 def glogout():
     credentials = client.OAuth2Credentials.from_json(session['credentials'])
     credentials.revoke(httplib2.Http())
 
 
+# Deauthorize Facebook
 def fblogout():
     facebook_id = session['facebook_id']
     access_token = session['facebook_token']['access_token']
@@ -229,7 +251,9 @@ def fblogout():
 
 
 # Primary routes
-
+#  - Based on permalinks, rather than IDs
+#  - SeaSurf extension provides CSRF protection for POST requests; requires
+#    no extra work on our end beyond including _csrf_token in all forms.
 
 @app.route('/')
 @app.route('/catalog')
@@ -243,6 +267,7 @@ def index():
 @app.route('/catalog/<string:c_permalink>')
 def showCategory(c_permalink):
     categories = dbsession.query(Category).all()
+    # Avoid second database query by running loop in already retrieved data
     for c in categories:
         if c.permalink == c_permalink:
             category = c
@@ -263,9 +288,13 @@ def showItem(c_permalink, i_permalink):
 
 @app.route('/catalog/<string:c_permalink>/new', methods=['POST', 'GET'])
 def newItem(c_permalink):
+
+    # Non-logged in users should not be allowed to create items.
     if 'username' not in session:
         flash('Please log in to add new items.')
         return redirect(url_for('index'))
+
+    # Create the new item
     if request.method == 'POST':
         newItem = Item(
             category_id=int(request.form['category']),
@@ -275,12 +304,14 @@ def newItem(c_permalink):
             description=request.form['description'],
             created_at=datetime.datetime.now(),
             user_id=session['user_id'])
+
         # Handle picture upload (if present)
         file = request.files['picture']
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             newItem.picture = filename
+
         dbsession.add(newItem)
         dbsession.commit()
         flash('Item successfully created.')
@@ -292,19 +323,27 @@ def newItem(c_permalink):
 
 @app.route('/catalog/<string:i_permalink>/edit', methods=['POST', 'GET'])
 def editItem(i_permalink):
+
+    # Non-logged in users should not be allowed to edit items.
     if 'username' not in session:
         flash('Please log in to manage your items.')
         return redirect(url_for('index'))
+
+    # Database queries
     item = dbsession.query(Item).filter_by(permalink=i_permalink).one()
     categories = dbsession.query(Category).all()
     for c in categories:
         if c.id == item.category_id:
             category = c
             break
+
+    # User should not be allowed to edit other users' items.
     if item.user_id != session['user_id']:
         return redirect(
             url_for('showItem', c_permalink=category.permalink,
                     i_permalink=item.permalink))
+
+    # Update item
     if request.method == 'POST':
         if request.form['category']:
             item.category_id = request.form['category']
@@ -315,6 +354,7 @@ def editItem(i_permalink):
         if request.form['description']:
             item.description = request.form['description']
         item.updated_at = datetime.datetime.now()
+
         # Handle picture upload (if present)
         file = request.files['picture']
         if file and allowed_file(file.filename):
@@ -324,8 +364,9 @@ def editItem(i_permalink):
             if item.picture:
                 path = "%s/%s" % (app.config['UPLOAD_FOLDER'], item.picture)
                 os.remove(path)
-            # Overwrite item's picture
+            # Update item's picture
             item.picture = filename
+
         dbsession.add(item)
         dbsession.commit()
         flash('Item succesfully updated.')
@@ -344,16 +385,24 @@ def allowed_file(filename):
 
 @app.route('/catalog/<string:i_permalink>/delete', methods=['POST', 'GET'])
 def deleteItem(i_permalink):
+
+    # Non-logged in users should not be allowed to delete items.
     if 'username' not in session:
         flash('Please log in to manage your items.')
         return redirect(url_for('index'))
+
+    # Database queries
     item = dbsession.query(Item).filter_by(permalink=i_permalink).one()
     category = dbsession.query(Category).filter_by(
         id=item.category_id).one()
+
+    # Users should not be allowed to delete other users' items.
     if item.user_id != session['user_id']:
         return redirect(
             url_for('showItem', c_permalink=category.permalink,
                     i_permalink=item.permalink))
+
+    # Delete item
     if request.method == 'POST':
         # Delete item's picture from filesystem
         if item.picture:
@@ -371,6 +420,9 @@ def deleteItem(i_permalink):
 
 
 # API Endpoint routes
+#  - Single call returns all data:
+#      Build catalog array of serialized categories with serialized items
+#      nested by category
 
 @app.route('/json')
 @app.route('/catalog/json')
@@ -381,6 +433,8 @@ def indexJSON():
         catalog.append(c.serialize)
         items = dbsession.query(Item).filter_by(category_id=c.id).all()
         catalog[-1]['items'] = [i.serialize for i in items]
+    # Jsonify automatically builds Response object with correct MIME type and
+    # content-type header
     return jsonify(Categories=catalog)
 
 
