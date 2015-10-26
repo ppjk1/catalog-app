@@ -39,11 +39,11 @@ def fblogin():
     if 'facebook_token' not in session:
         app_id = json.loads(open('fb_client_secrets.json', 'r').read())[
             'web']['app_id']
-        return redirect('https://www.facebook.com/dialog/oauth?client_id=%s&redirect_uri=http://localhost:8000/fboauth2redirect&scope=public_profile,email' % app_id)
+        return redirect('https://www.facebook.com/dialog/oauth?client_id=%s&redirect_uri=http://localhost:8000/fboauth2redirect&scope=public_profile,email' % app_id)  # noqa
 
     # Fetch user data
     token = session['facebook_token']['access_token']
-    url = 'https://graph.facebook.com/v2.5/me?access_token=%s&fields=name,id,email,picture' % (token)
+    url = 'https://graph.facebook.com/v2.5/me?access_token=%s&fields=name,id,email,picture' % (token)  # noqa
     h = httplib2.Http()
     data = json.loads(h.request(url, 'GET')[1])
 
@@ -88,7 +88,7 @@ def fboauth2redirect():
         'web']['app_secret']
 
     # Exchange auth code for user access token
-    url = 'https://graph.facebook.com/v2.3/oauth/access_token?client_id=%s&redirect_uri=http://localhost:8000/fboauth2redirect&client_secret=%s&code=%s' % (app_id, app_secret, auth_code)
+    url = 'https://graph.facebook.com/v2.3/oauth/access_token?client_id=%s&redirect_uri=http://localhost:8000/fboauth2redirect&client_secret=%s&code=%s' % (app_id, app_secret, auth_code)  # noqa
     h = httplib2.Http()
     result = json.loads(h.request(url, 'GET')[1])
     if 'access_token' in result:
@@ -100,7 +100,7 @@ def fboauth2redirect():
 
     # Verify user access token
     token = session['facebook_token']['access_token']
-    url = 'https://graph.facebook.com/debug_token?input_token=%s&key=value&access_token=%s|%s' % (token, app_id, app_secret)
+    url = 'https://graph.facebook.com/debug_token?input_token=%s&key=value&access_token=%s|%s' % (token, app_id, app_secret)  # noqa
     h = httplib2.Http()
     data = json.loads(h.request(url, 'GET')[1])['data']
     if data['app_id'] != app_id:
@@ -202,7 +202,7 @@ def logout():
 
 @app.route('/deauthorize')
 def deauthorize():
-    return render_template('deauthorize.html', provider = session['provider'])
+    return render_template('deauthorize.html', provider=session['provider'])
 
 
 @app.route('/disconnect')
@@ -222,7 +222,8 @@ def glogout():
 def fblogout():
     facebook_id = session['facebook_id']
     access_token = session['facebook_token']['access_token']
-    url = 'https://graph.facebook.com/%s/permissions?access_token=%s' % (facebook_id, access_token)
+    url = 'https://graph.facebook.com/%s/permissions?access_token=%s' % (
+        facebook_id, access_token)
     h = httplib2.Http()
     h.request(url, 'DELETE')[1]
 
@@ -234,9 +235,9 @@ def fblogout():
 @app.route('/catalog')
 def index():
     categories = dbsession.query(Category).all()
-    latest = dbsession.query(Item).order_by(Item.created_at.desc()).limit(10).all()
-    return render_template('index.html', categories=categories,
-        latest = latest)
+    latest = dbsession.query(Item).order_by(
+        Item.created_at.desc()).limit(10).all()
+    return render_template('index.html', categories=categories, latest=latest)
 
 
 @app.route('/catalog/<string:c_permalink>')
@@ -269,7 +270,8 @@ def newItem(c_permalink):
         newItem = Item(
             category_id=int(request.form['category']),
             name=request.form['name'],
-            permalink=request.form['name'].lower().replace(' ', '-').translate("'"),
+            permalink=request.form['name'].lower().replace(
+                ' ', '-').translate("'"),
             description=request.form['description'],
             created_at=datetime.datetime.now(),
             user_id=session['user_id'])
@@ -278,7 +280,7 @@ def newItem(c_permalink):
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            newItem.picture=filename
+            newItem.picture = filename
         dbsession.add(newItem)
         dbsession.commit()
         flash('Item successfully created.')
@@ -300,14 +302,16 @@ def editItem(i_permalink):
             category = c
             break
     if item.user_id != session['user_id']:
-        return redirect(url_for('showItem', c_permalink = category.permalink,
-            i_permalink = item.permalink))
+        return redirect(
+            url_for('showItem', c_permalink=category.permalink,
+                    i_permalink=item.permalink))
     if request.method == 'POST':
         if request.form['category']:
             item.category_id = request.form['category']
         if request.form['name']:
             item.name = request.form['name']
-            item.permalink = request.form['name'].lower().replace(' ', '-').translate("'")
+            item.permalink = request.form['name'].lower().replace(
+                ' ', '-').translate("'")
         if request.form['description']:
             item.description = request.form['description']
         item.updated_at = datetime.datetime.now()
@@ -321,7 +325,7 @@ def editItem(i_permalink):
                 path = "%s/%s" % (app.config['UPLOAD_FOLDER'], item.picture)
                 os.remove(path)
             # Overwrite item's picture
-            item.picture=filename
+            item.picture = filename
         dbsession.add(item)
         dbsession.commit()
         flash('Item succesfully updated.')
@@ -347,8 +351,9 @@ def deleteItem(i_permalink):
     category = dbsession.query(Category).filter_by(
         id=item.category_id).one()
     if item.user_id != session['user_id']:
-        return redirect(url_for('showItem', c_permalink=category.permalink,
-            i_permalink=item.permalink))
+        return redirect(
+            url_for('showItem', c_permalink=category.permalink,
+                    i_permalink=item.permalink))
     if request.method == 'POST':
         # Delete item's picture from filesystem
         if item.picture:
@@ -394,6 +399,6 @@ def indexXML():
 
 
 if __name__ == "__main__":
-    app.secret_key = '\x7f\x99\xe9\x91XjH?\x10\xe71\xa9My\x8d\xdb\xa2\xa8q0\xef\xda\x07\x8f'
+    app.secret_key = '\x7f\x99\xe9\x91XjH?\x10\xe71\xa9My\x8d\xdb\xa2\xa8q0\xef\xda\x07\x8f'  # noqa
     app.debug = True
     app.run(host='0.0.0.0', port=8000)

@@ -33,86 +33,86 @@ session.add(category8)
 session.add(category9)
 session.commit()
 
-item1 = Item(name = "Awesome Acoustic Guitar",
-             permalink = "awesome-acoustic-guitar",
-             description = "An awesome acoustic guitar.",
-             picture = "acoustic-guitar.jpg",
-             created_at = datetime.datetime.now(),
-             updated_at = datetime.datetime.now(),
-             category = category1,
-             user = user1)
+item1 = Item(name="Awesome Acoustic Guitar",
+             permalink="awesome-acoustic-guitar",
+             description="An awesome acoustic guitar.",
+             picture="acoustic-guitar.jpg",
+             created_at=datetime.datetime.now(),
+             updated_at=datetime.datetime.now(),
+             category=category1,
+             user=user1)
 
-item2 = Item(name = "Sublime Electric Guitar",
-             permalink = "sublime-electric-guitar",
-             description = "A sublime electric guitar.",
-             picture = "electric-guitar.jpg",
-             created_at = datetime.datetime.now(),
-             updated_at = datetime.datetime.now(),
-             category = category2,
-             user = user1)
+item2 = Item(name="Sublime Electric Guitar",
+             permalink="sublime-electric-guitar",
+             description="A sublime electric guitar.",
+             picture="electric-guitar.jpg",
+             created_at=datetime.datetime.now(),
+             updated_at=datetime.datetime.now(),
+             category=category2,
+             user=user1)
 
-item3 = Item(name = "Wunderkind Bass Guitar",
-             permalink = "wunderkind-bass-guitar",
-             description = "A bass guitar for wunderkinds.",
-             picture = "bass-guitar.jpg",
-             created_at = datetime.datetime.now(),
-             updated_at = datetime.datetime.now(),
-             category = category3,
-             user = user1)
+item3 = Item(name="Wunderkind Bass Guitar",
+             permalink="wunderkind-bass-guitar",
+             description="A bass guitar for wunderkinds.",
+             picture="bass-guitar.jpg",
+             created_at=datetime.datetime.now(),
+             updated_at=datetime.datetime.now(),
+             category=category3,
+             user=user1)
 
-item4 = Item(name = "Unholy Ukelele",
-             permalink = "unholy-ukelele",
-             description = "An unholy ukelele.",
-             picture = "ukelele.jpg",
-             created_at = datetime.datetime.now(),
-             updated_at = datetime.datetime.now(),
-             category = category4,
-             user = user1)
+item4 = Item(name="Unholy Ukelele",
+             permalink="unholy-ukelele",
+             description="An unholy ukelele.",
+             picture="ukelele.jpg",
+             created_at=datetime.datetime.now(),
+             updated_at=datetime.datetime.now(),
+             category=category4,
+             user=user1)
 
-item5 = Item(name = "Merry Mandolin",
-             permalink = "merry-mandolin",
-             description = "The merriest of mandolins.",
-             picture = "mandolin.jpg",
-             created_at = datetime.datetime.now(),
-             updated_at = datetime.datetime.now(),
-             category = category5,
-             user = user1)
+item5 = Item(name="Merry Mandolin",
+             permalink="merry-mandolin",
+             description="The merriest of mandolins.",
+             picture="mandolin.jpg",
+             created_at=datetime.datetime.now(),
+             updated_at=datetime.datetime.now(),
+             category=category5,
+             user=user1)
 
-item6 = Item(name = "Blistering Banjo",
-             permalink = "blistering-banjo",
-             description = "A blistering banjo.",
-             picture = "banjo.jpg",
-             created_at = datetime.datetime.now(),
-             updated_at = datetime.datetime.now(),
-             category = category6,
-             user = user1)
+item6 = Item(name="Blistering Banjo",
+             permalink="blistering-banjo",
+             description="A blistering banjo.",
+             picture="banjo.jpg",
+             created_at=datetime.datetime.now(),
+             updated_at=datetime.datetime.now(),
+             category=category6,
+             user=user1)
 
-item7 = Item(name = "High Altitude Amplifier",
-             permalink = "high-altitude-amplifier",
-             description = "A guitar amp for the heights.",
-             picture = "guitar-amp.jpg",
-             created_at = datetime.datetime.now(),
-             updated_at = datetime.datetime.now(),
-             category = category7,
-             user = user1)
+item7 = Item(name="High Altitude Amplifier",
+             permalink="high-altitude-amplifier",
+             description="A guitar amp for the heights.",
+             picture="guitar-amp.jpg",
+             created_at=datetime.datetime.now(),
+             updated_at=datetime.datetime.now(),
+             category=category7,
+             user=user1)
 
-item8 = Item(name = "Effects Pedals in Triplicate",
-             permalink = "effects-pedals-in-triplicate",
-             description = "More effects pedals than you could ever want.",
-             picture = "pedals.jpg",
-             created_at = datetime.datetime.now(),
-             updated_at = datetime.datetime.now(),
-             category = category8,
-             user = user1)
+item8 = Item(name="Effects Pedals in Triplicate",
+             permalink="effects-pedals-in-triplicate",
+             description="More effects pedals than you could ever want.",
+             picture="pedals.jpg",
+             created_at=datetime.datetime.now(),
+             updated_at=datetime.datetime.now(),
+             category=category8,
+             user=user1)
 
-item9 = Item(name = "The Pounding Drums",
-             permalink = "the-pounding-drums",
-             description = "A drum for every occasion.",
-             picture = "drums.jpg",
-             created_at = datetime.datetime.now(),
-             updated_at = datetime.datetime.now(),
-             category = category9,
-             user = user1)
+item9 = Item(name="The Pounding Drums",
+             permalink="the-pounding-drums",
+             description="A drum for every occasion.",
+             picture="drums.jpg",
+             created_at=datetime.datetime.now(),
+             updated_at=datetime.datetime.now(),
+             category=category9,
+             user=user1)
 
 session.add(item1)
 session.add(item2)

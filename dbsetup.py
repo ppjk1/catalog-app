@@ -33,6 +33,7 @@ class Category(Base):
             'permalink': self.permalink
         }
 
+
 class Item(Base):
 
     __tablename__ = 'item'
