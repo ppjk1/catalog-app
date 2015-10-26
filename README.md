@@ -50,7 +50,7 @@ Aggregated catalog data can be downloaded via API endpoints (links are also avai
 ## What's Included ##
 Within the download, you'll find the following files:
 ```
-catalog/
+catalog-app/
   |--- README.md
   |--- application.py
   |--- dbsetup.py
