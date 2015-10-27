@@ -3,6 +3,7 @@ import httplib2
 import json
 import datetime
 
+from functools import wraps
 from flask import Flask, session, redirect, render_template, request, url_for,\
     flash, jsonify, make_response
 from werkzeug import secure_filename
@@ -257,6 +258,18 @@ def fblogout():
 #  - SeaSurf extension provides CSRF protection for POST requests; requires
 #    no extra work on our end beyond including _csrf_token in all forms.
 
+def login_required(func):
+    '''Non-logged in users should not be allowed to create items.'''
+
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session:
+            flash('Please log in to manage items.')
+            return redirect(url_for('index'))
+        return func(*args, **kwargs)
+    return decorated_function
+
+
 @app.route('/')
 @app.route('/catalog')
 def index():
@@ -289,12 +302,8 @@ def showItem(c_permalink, i_permalink):
 
 
 @app.route('/catalog/<string:c_permalink>/new', methods=['POST', 'GET'])
+@login_required
 def newItem(c_permalink):
-
-    # Non-logged in users should not be allowed to create items.
-    if 'username' not in session:
-        flash('Please log in to add new items.')
-        return redirect(url_for('index'))
 
     # Create the new item
     if request.method == 'POST':
@@ -324,12 +333,8 @@ def newItem(c_permalink):
 
 
 @app.route('/catalog/<string:i_permalink>/edit', methods=['POST', 'GET'])
+@login_required
 def editItem(i_permalink):
-
-    # Non-logged in users should not be allowed to edit items.
-    if 'username' not in session:
-        flash('Please log in to manage your items.')
-        return redirect(url_for('index'))
 
     # Database queries
     item = dbsession.query(Item).filter_by(permalink=i_permalink).one()
@@ -386,12 +391,8 @@ def allowed_file(filename):
 
 
 @app.route('/catalog/<string:i_permalink>/delete', methods=['POST', 'GET'])
+@login_required
 def deleteItem(i_permalink):
-
-    # Non-logged in users should not be allowed to delete items.
-    if 'username' not in session:
-        flash('Please log in to manage your items.')
-        return redirect(url_for('index'))
 
     # Database queries
     item = dbsession.query(Item).filter_by(permalink=i_permalink).one()
