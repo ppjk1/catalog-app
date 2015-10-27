@@ -254,7 +254,6 @@ def fblogout():
 
 
 # Primary routes
-#  - Based on permalinks, rather than IDs
 #  - SeaSurf extension provides CSRF protection for POST requests; requires
 #    no extra work on our end beyond including _csrf_token in all forms.
 
@@ -279,39 +278,38 @@ def index():
     return render_template('index.html', categories=categories, latest=latest)
 
 
-@app.route('/catalog/<string:c_permalink>')
-def showCategory(c_permalink):
+@app.route('/catalog/<int:category_id>')
+def showCategory(category_id):
     categories = dbsession.query(Category).all()
     # Avoid second database query by running loop in already retrieved data
     for c in categories:
-        if c.permalink == c_permalink:
+        if c.id == category_id:
             category = c
             break
+
     items = dbsession.query(Item).filter_by(category_id=category.id).all()
     return render_template(
         'items.html', category=category, categories=categories, items=items)
 
 
-@app.route('/catalog/<string:c_permalink>/<i_permalink>')
-def showItem(c_permalink, i_permalink):
+@app.route('/catalog/<int:category_id>/<item_id>')
+def showItem(category_id, item_id):
     category = dbsession.query(Category).filter_by(
-        permalink=c_permalink).one()
-    item = dbsession.query(Item).filter_by(permalink=i_permalink).one()
+        id=category_id).one()
+    item = dbsession.query(Item).filter_by(id=item_id).one()
     return render_template(
         'item-detail.html', item=item, category=category)
 
 
-@app.route('/catalog/<string:c_permalink>/new', methods=['POST', 'GET'])
+@app.route('/catalog/<int:category_id>/new', methods=['POST', 'GET'])
 @login_required
-def newItem(c_permalink):
+def newItem(category_id):
 
     # Create the new item
     if request.method == 'POST':
         newItem = Item(
             category_id=int(request.form['category']),
             name=request.form['name'],
-            permalink=request.form['name'].lower().replace(
-                ' ', '-').translate("'"),
             description=request.form['description'],
             created_at=datetime.datetime.now(),
             user_id=session['user_id'])
@@ -326,18 +324,18 @@ def newItem(c_permalink):
         dbsession.add(newItem)
         dbsession.commit()
         flash('Item successfully created.')
-        return redirect(url_for('showCategory', c_permalink=c_permalink))
+        return redirect(url_for('showCategory', category_id=category_id))
     else:
         categories = dbsession.query(Category).all()
         return render_template('item-new.html', categories=categories)
 
 
-@app.route('/catalog/<string:i_permalink>/edit', methods=['POST', 'GET'])
+@app.route('/catalog/<int:item_id>/edit', methods=['POST', 'GET'])
 @login_required
-def editItem(i_permalink):
+def editItem(item_id):
 
     # Database queries
-    item = dbsession.query(Item).filter_by(permalink=i_permalink).one()
+    item = dbsession.query(Item).filter_by(id=item_id).one()
     categories = dbsession.query(Category).all()
     for c in categories:
         if c.id == item.category_id:
@@ -347,8 +345,8 @@ def editItem(i_permalink):
     # User should not be allowed to edit other users' items.
     if item.user_id != session['user_id']:
         return redirect(
-            url_for('showItem', c_permalink=category.permalink,
-                    i_permalink=item.permalink))
+            url_for('showItem', category_id=category.id,
+                    item_id=item.id))
 
     # Update item
     if request.method == 'POST':
@@ -356,8 +354,6 @@ def editItem(i_permalink):
             item.category_id = request.form['category']
         if request.form['name']:
             item.name = request.form['name']
-            item.permalink = request.form['name'].lower().replace(
-                ' ', '-').translate("'")
         if request.form['description']:
             item.description = request.form['description']
         item.updated_at = datetime.datetime.now()
@@ -378,7 +374,7 @@ def editItem(i_permalink):
         dbsession.commit()
         flash('Item succesfully updated.')
         return redirect(
-            url_for('showCategory', c_permalink=category.permalink))
+            url_for('showCategory', category_id=category.id))
     else:
         return render_template('item-edit.html', category=category,
                                categories=categories, item=item)
@@ -390,20 +386,20 @@ def allowed_file(filename):
         filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
-@app.route('/catalog/<string:i_permalink>/delete', methods=['POST', 'GET'])
+@app.route('/catalog/<int:item_id>/delete', methods=['POST', 'GET'])
 @login_required
-def deleteItem(i_permalink):
+def deleteItem(item_id):
 
     # Database queries
-    item = dbsession.query(Item).filter_by(permalink=i_permalink).one()
+    item = dbsession.query(Item).filter_by(id=item_id).one()
     category = dbsession.query(Category).filter_by(
         id=item.category_id).one()
 
     # Users should not be allowed to delete other users' items.
     if item.user_id != session['user_id']:
         return redirect(
-            url_for('showItem', c_permalink=category.permalink,
-                    i_permalink=item.permalink))
+            url_for('showItem', category_id=category.id,
+                    item_id=item.id))
 
     # Delete item
     if request.method == 'POST':
@@ -416,7 +412,7 @@ def deleteItem(i_permalink):
         dbsession.commit()
         flash('Item successfully deleted.')
         return redirect(
-            url_for('showCategory', c_permalink=category.permalink))
+            url_for('showCategory', category_id=category.id))
     else:
         return render_template(
             'item-delete.html', category=category, item=item)

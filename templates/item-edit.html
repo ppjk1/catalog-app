@@ -37,7 +37,7 @@
         <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
 
         <div class="form-buttons">
-            <button type="button" class="button-default" onclick="javascript:window.location='{{ url_for('showItem', c_permalink = category.permalink, i_permalink = item.permalink) }}'; return false;">Cancel</button>
+            <button type="button" class="button-default" onclick="javascript:window.location='{{ url_for('showItem', category_id=category.id, item_id=item.id) }}'; return false;">Cancel</button>
             <button type="submit">Update</button>
         </div>
 

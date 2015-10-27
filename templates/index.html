@@ -5,7 +5,7 @@
 <nav id="menu">
     <ul>
     {% for c in categories %}
-        <li><a href="{{ url_for('showCategory', c_permalink = c.permalink) }}">{{ c.name }}</a></li>
+        <li><a href="{{ url_for('showCategory', category_id=c.id) }}">{{ c.name }}</a></li>
     {% endfor %}
     </ul>
 </nav>
@@ -15,7 +15,7 @@
     <ul>
         {% for l in latest %}
         <li class="latest">
-            <a href="{{ url_for('showItem', c_permalink=l.category.permalink, i_permalink=l.permalink) }}">{{ l.name }}</a>
+            <a href="{{ url_for('showItem', category_id=l.category.id, item_id=l.id) }}">{{ l.name }}</a>
             <br>
             <span class="category">{{ l.category.name }}</span>
         </li>

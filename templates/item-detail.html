@@ -3,7 +3,7 @@
 
 <div class="container container-full">
     <div class="breadcrumb">
-        <a href="{{ url_for('showCategory', c_permalink = category.permalink) }}">
+        <a href="{{ url_for('showCategory', category_id=category.id) }}">
             <i class="fa fa-chevron-left"></i> {{ item.category.name }}
         </a>
     </div>
@@ -14,9 +14,9 @@
 
         {% if 'username' in session and session['user_id'] == item.user_id %}
             <p>
-                <a href="{{ url_for('editItem', i_permalink = item.permalink) }}">Edit</a>
+                <a href="{{ url_for('editItem', item_id=item.id) }}">Edit</a>
                 |
-                <a href="{{ url_for('deleteItem', i_permalink = item.permalink) }}">Delete</a>
+                <a href="{{ url_for('deleteItem', item_id=item.id) }}">Delete</a>
             </p>
         {% endif %}
 

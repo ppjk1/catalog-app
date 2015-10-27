@@ -12,15 +12,15 @@ session = DBSession()
 
 user1 = User(name="Autobot", email="autobot@hotbot.com")
 
-category1 = Category(name="Acoustic Guitars", permalink="acoustic-guitars")
-category2 = Category(name="Electric Guitars", permalink="electric-guitars")
-category3 = Category(name="Bass Guitars", permalink="bass-guitars")
-category4 = Category(name="Ukeleles", permalink="ukeleles")
-category5 = Category(name="Mandolins", permalink="mandolins")
-category6 = Category(name="Banjos", permalink="banjos")
-category7 = Category(name="Guitar Amplifiers", permalink="guitar-amplifiers")
-category8 = Category(name="Effects Pedals", permalink="effects-pedals")
-category9 = Category(name="Drums", permalink="drums")
+category1 = Category(name="Acoustic Guitars")
+category2 = Category(name="Electric Guitars")
+category3 = Category(name="Bass Guitars")
+category4 = Category(name="Ukeleles")
+category5 = Category(name="Mandolins")
+category6 = Category(name="Banjos")
+category7 = Category(name="Guitar Amplifiers")
+category8 = Category(name="Effects Pedals")
+category9 = Category(name="Drums")
 
 session.add(category1)
 session.add(category2)
@@ -34,7 +34,6 @@ session.add(category9)
 session.commit()
 
 item1 = Item(name="Awesome Acoustic Guitar",
-             permalink="awesome-acoustic-guitar",
              description="An awesome acoustic guitar.",
              picture="acoustic-guitar.jpg",
              created_at=datetime.datetime.now(),
@@ -43,7 +42,6 @@ item1 = Item(name="Awesome Acoustic Guitar",
              user=user1)
 
 item2 = Item(name="Sublime Electric Guitar",
-             permalink="sublime-electric-guitar",
              description="A sublime electric guitar.",
              picture="electric-guitar.jpg",
              created_at=datetime.datetime.now(),
@@ -52,7 +50,6 @@ item2 = Item(name="Sublime Electric Guitar",
              user=user1)
 
 item3 = Item(name="Wunderkind Bass Guitar",
-             permalink="wunderkind-bass-guitar",
              description="A bass guitar for wunderkinds.",
              picture="bass-guitar.jpg",
              created_at=datetime.datetime.now(),
@@ -61,7 +58,6 @@ item3 = Item(name="Wunderkind Bass Guitar",
              user=user1)
 
 item4 = Item(name="Unholy Ukelele",
-             permalink="unholy-ukelele",
              description="An unholy ukelele.",
              picture="ukelele.jpg",
              created_at=datetime.datetime.now(),
@@ -70,7 +66,6 @@ item4 = Item(name="Unholy Ukelele",
              user=user1)
 
 item5 = Item(name="Merry Mandolin",
-             permalink="merry-mandolin",
              description="The merriest of mandolins.",
              picture="mandolin.jpg",
              created_at=datetime.datetime.now(),
@@ -79,7 +74,6 @@ item5 = Item(name="Merry Mandolin",
              user=user1)
 
 item6 = Item(name="Blistering Banjo",
-             permalink="blistering-banjo",
              description="A blistering banjo.",
              picture="banjo.jpg",
              created_at=datetime.datetime.now(),
@@ -88,7 +82,6 @@ item6 = Item(name="Blistering Banjo",
              user=user1)
 
 item7 = Item(name="High Altitude Amplifier",
-             permalink="high-altitude-amplifier",
              description="A guitar amp for the heights.",
              picture="guitar-amp.jpg",
              created_at=datetime.datetime.now(),
@@ -97,7 +90,6 @@ item7 = Item(name="High Altitude Amplifier",
              user=user1)
 
 item8 = Item(name="Effects Pedals in Triplicate",
-             permalink="effects-pedals-in-triplicate",
              description="More effects pedals than you could ever want.",
              picture="pedals.jpg",
              created_at=datetime.datetime.now(),
@@ -106,7 +98,6 @@ item8 = Item(name="Effects Pedals in Triplicate",
              user=user1)
 
 item9 = Item(name="The Pounding Drums",
-             permalink="the-pounding-drums",
              description="A drum for every occasion.",
              picture="drums.jpg",
              created_at=datetime.datetime.now(),
