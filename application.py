@@ -39,9 +39,13 @@ dbsession = DBSession()
 
 # Login/authorize routes and functions
 
-# Facebook login handler
 @app.route('/fblogin')
 def fblogin():
+    """Handles Facebook login.
+
+    Redirects to Facebook authentication dialog if user is not logged in.
+    Retrieves user data and redirects to '/' if user is logged in.
+    """
 
     # If not logged in, redirect to Facebook login
     if 'facebook_token' not in session:
@@ -79,9 +83,14 @@ def fblogin():
 
     return redirect(url_for('index'))
 
-# Facebook auth redirect
+
 @app.route('/fboauth2redirect')
 def fboauth2redirect():
+    """Handles Facebook authentication redirect.
+
+    Receives authentication code, exchanges code for access token, verifies
+    token and redirects to '/fblogin' for user data retrieval.
+    """
 
     # User denied Facebook auth request
     if 'error' in request.args:
@@ -125,9 +134,14 @@ def fboauth2redirect():
     session['facebook_id'] = data['user_id']
     return redirect(url_for('fblogin'))
 
-# Google login handler
+
 @app.route('/glogin')
 def glogin():
+    """Handles Goolge login.
+
+    Redirects to '/goauth2redirect' if user is not logged in.
+    Retrieves user data and redirects to '/' if user is logged in.
+    """
 
     # If not logged in, redirect to Google login
     if 'credentials' not in session:
@@ -158,9 +172,15 @@ def glogin():
     return redirect(url_for('index'))
 
 
-# Google auth redirect
 @app.route('/goauth2redirect')
 def goauth2redirect():
+    """Handles Google authentication flow.
+
+    Builds a login flow object. Redirects user to Google authentication
+    dialog if user is not logged in. Once user logs in, retrieves
+    authorization code and upgrades code for credentials object. Then
+    redirects to '/glogin' for user data retrieval.
+    """
 
     # Build a flow object
     flow = client.flow_from_clientsecrets(
@@ -183,6 +203,14 @@ def goauth2redirect():
 # User helper functions
 
 def createUser(session):
+    """Creates a new user record.
+
+    Args:
+        session: A Flask session object populated with 'username', 'email',
+                 and 'picture' attributes.
+    Returns:
+        newUser.id: The numerical id of the newly created user record.
+    """
     newUser = User(
                 name=session['username'],
                 email=session['email'],
@@ -195,6 +223,14 @@ def createUser(session):
 
 
 def getUserID(email):
+    """Retrieves a user record.
+
+    Args:
+        email: A string email address to filter on in user lookup.
+    Returns:
+        user.id: The numerical id of the user record if found.
+        None:   If user record was not found.
+    """
     try:
         user = dbsession.query(User).filter_by(email=email).one()
         return user.id
@@ -213,23 +249,22 @@ def getUserID(email):
 #     available via footer link.
 
 
-# Clears the session. Does NOT revoke 3rd party authorizations.
 @app.route('/logout')
 def logout():
+    """Clears the Flask session."""
     session.clear()
     return redirect(url_for('index'))
 
 
-# Redirects to a deauthorization confirmation page.
 @app.route('/deauthorize')
 def deauthorize():
+    """Redirects to a deauthorization confirmation page."""
     return render_template('deauthorize.html', provider=session['provider'])
 
 
-# Calls appropriate deauthorization function and then redirects to logout to
-# clear the session.
 @app.route('/disconnect')
 def disconnect():
+    """Deauthorizes user and redirects to '/logout' to clear the session."""
     if session['provider'] == 'google':
         glogout()
     elif session['provider'] == 'facebook':
@@ -237,14 +272,14 @@ def disconnect():
     return redirect(url_for('logout'))
 
 
-# Deauthorize Google
 def glogout():
+    """Deauthorizes user from Google using the credentials object."""
     credentials = client.OAuth2Credentials.from_json(session['credentials'])
     credentials.revoke(httplib2.Http())
 
 
-# Deauthorize Facebook
 def fblogout():
+    """Deauthorizes the user from Facebook using stored session data."""
     facebook_id = session['facebook_id']
     access_token = session['facebook_token']['access_token']
     url = 'https://graph.facebook.com/%s/permissions?access_token=%s' % (
@@ -258,8 +293,17 @@ def fblogout():
 #    no extra work on our end beyond including _csrf_token in all forms.
 
 def login_required(func):
-    '''Non-logged in users should not be allowed to create items.'''
+    """Function decorator that controls user permissions.
 
+    Prevents non-logged in users from performing Create, Update, or Delete
+    operations by redirecting to '/'.
+
+    Args:
+        func: The function to decorate.
+    Returns:
+        decorated_function: The newly decorated function with added permission
+                            controls.
+    """
     @wraps(func)
     def decorated_function(*args, **kwargs):
         if 'username' not in session:
@@ -272,6 +316,14 @@ def login_required(func):
 @app.route('/')
 @app.route('/catalog')
 def index():
+    """Route for site index.
+
+    Retrieves all categories for site menu.
+    Retrieves latest items added.
+
+    Returns:
+        index.html
+    """
     categories = dbsession.query(Category).all()
     latest = dbsession.query(Item).order_by(
         Item.created_at.desc()).limit(10).all()
@@ -280,13 +332,22 @@ def index():
 
 @app.route('/catalog/<int:category_id>')
 def showCategory(category_id):
+    """Route for a single category.
+
+    Retrieves all items for the given category.
+    Retrieves all categories for site menu.
+
+    Args:
+        category_id: A numerical category id for item lookup.
+    Returns:
+        items.html
+    """
     categories = dbsession.query(Category).all()
     # Avoid second database query by running loop in already retrieved data
     for c in categories:
         if c.id == category_id:
             category = c
             break
-
     items = dbsession.query(Item).filter_by(category_id=category.id).all()
     return render_template(
         'items.html', category=category, categories=categories, items=items)
@@ -294,6 +355,13 @@ def showCategory(category_id):
 
 @app.route('/catalog/<int:category_id>/<item_id>')
 def showItem(category_id, item_id):
+    """Route for a single item.
+
+    Retrieves an item record and its parent category record.
+
+    Returns:
+        item-detail.html
+    """
     category = dbsession.query(Category).filter_by(
         id=category_id).one()
     item = dbsession.query(Item).filter_by(id=item_id).one()
@@ -304,7 +372,15 @@ def showItem(category_id, item_id):
 @app.route('/catalog/<int:category_id>/new', methods=['POST', 'GET'])
 @login_required
 def newItem(category_id):
+    """Route for new item creation.
 
+    Args:
+        category_id: A numerical category id. Item creation is not restricted
+                     to this category, however.
+    Returns:
+        GET: item-new.html - form with inputs for item creation
+        POST: redirect to 'showCategory' after creating new item record
+    """
     # Create the new item
     if request.method == 'POST':
         newItem = Item(
@@ -333,7 +409,14 @@ def newItem(category_id):
 @app.route('/catalog/<int:item_id>/edit', methods=['POST', 'GET'])
 @login_required
 def editItem(item_id):
+    """Route to edit a single item.
 
+    Args:
+        item_id: A numerical item id.
+    Returns:
+        GET: item-edit.html - form with inputs to edit item details
+        POST: redirect to 'showCategory' after updating item record
+    """
     # Database queries
     item = dbsession.query(Item).filter_by(id=item_id).one()
     categories = dbsession.query(Category).all()
@@ -380,8 +463,16 @@ def editItem(item_id):
                                categories=categories, item=item)
 
 
-# File upload utility function
 def allowed_file(filename):
+    """Checks format of an uploaded file.
+
+    Compares file extension to global list object.
+
+    Args:
+        filename: The filename of an uploaded file.
+    Returns:
+        Boolean value
+    """
     return '.' in filename and \
         filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
@@ -389,7 +480,14 @@ def allowed_file(filename):
 @app.route('/catalog/<int:item_id>/delete', methods=['POST', 'GET'])
 @login_required
 def deleteItem(item_id):
+    """Route for item deletion.
 
+    Args:
+        item_id: A numerical item id.
+    Returns:
+        GET: item-delete.html - form for confirmation prior to deletion
+        POST: redirect to 'showCategory' after item record deletion
+    """
     # Database queries
     item = dbsession.query(Item).filter_by(id=item_id).one()
     category = dbsession.query(Category).filter_by(
@@ -426,6 +524,7 @@ def deleteItem(item_id):
 @app.route('/json')
 @app.route('/catalog/json')
 def indexJSON():
+    """Route for JSON endpoint."""
     categories = dbsession.query(Category).all()
     catalog = []
     for c in categories:
@@ -440,6 +539,7 @@ def indexJSON():
 @app.route('/xml')
 @app.route('/catalog/xml')
 def indexXML():
+    """Route for XML endpoint."""
     categories = dbsession.query(Category).all()
     catalog = []
     for c in categories:
