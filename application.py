@@ -19,10 +19,12 @@ from apiclient import discovery
 # Configuration for picture uploads
 UPLOAD_FOLDER = '/vagrant/catalog/static/images'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+UPLOAD_FILESIZE_LIMIT = 4 * 1024 * 1024  # 4 megabytes
 
 # Configure app and extensions
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = UPLOAD_FILESIZE_LIMIT
 csrf = SeaSurf(app)
 
 # Connect to database
