@@ -20,7 +20,7 @@
         <label for="description">Description:</label>
         <textarea name="description" placeholder="Item description" required></textarea>
 
-        <label for="picture">Picture:</label>
+        <label for="picture">Picture (upload limit 4 MB):</label>
         <input type="file" name="picture">
 
         <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">

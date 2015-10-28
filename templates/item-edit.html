@@ -28,9 +28,9 @@
         <label>Current Picture:</label>
         <img src="{{ url_for('static', filename='images/%s' % item.picture) }}">
 
-        <label for="picture">Choose a Different Picture:</label>
+        <label for="picture">Choose a Different Picture (upload limit 4 MB):</label>
         {% else %}
-        <label for="picture">Choose a Picture:</label>
+        <label for="picture">Choose a Picture (upload limit 4 MB):</label>
         {% endif %}
         <input type="file" name="picture">
 

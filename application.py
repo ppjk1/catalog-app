@@ -398,9 +398,11 @@ def newItem(category_id):
             newItem.picture = filename
 
         dbsession.add(newItem)
+        dbsession.flush()
         dbsession.commit()
         flash('Item successfully created.')
-        return redirect(url_for('showCategory', category_id=category_id))
+        return redirect(
+            url_for('showItem', category_id=category_id, item_id=newItem.id))
     else:
         categories = dbsession.query(Category).all()
         return render_template('item-new.html', categories=categories)
@@ -457,7 +459,7 @@ def editItem(item_id):
         dbsession.commit()
         flash('Item succesfully updated.')
         return redirect(
-            url_for('showCategory', category_id=category.id))
+            url_for('showItem', category_id=category.id, item_id=item.id))
     else:
         return render_template('item-edit.html', category=category,
                                categories=categories, item=item)
@@ -549,6 +551,18 @@ def indexXML():
     response = make_response(render_template('catalog.xml', catalog=catalog))
     response.headers['Content-Type'] = 'application/xml'
     return response
+
+
+@app.errorhandler(413)
+def upload_size_error(e):
+    """Catches 413 error from filesize limit enforced on photo uploads.
+
+    Args:
+        e: Error object
+    Returns:
+        413.html
+    """
+    return render_template('413.html'), 413
 
 
 if __name__ == "__main__":
