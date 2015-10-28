@@ -557,6 +557,7 @@ def indexXML():
 def upload_size_error(e):
     """Catches 413 error from filesize limit enforced on photo uploads.
 
+    Source: https://gist.github.com/bacher09/7231395
     Args:
         e: Error object
     Returns:

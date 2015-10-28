@@ -97,6 +97,7 @@ catalog-app/
 - Icons: [Font Awesome][8]
 - Background Pattern: http://subtlepatterns.com
 - Content and Header Images: https://pixabay.com
+- 413 Error handling: https://gist.github.com/bacher09/7231395
 - Much of the project codebase builds upon work done in Udacity prep courses. Login flow, however, was built from scratch following Google and Facebook documentation.
 
 [1]: https://www.python.org/downloads/
